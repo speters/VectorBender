@@ -20,8 +20,9 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QDialog
 from qgis.core import *
 
 # Basic dependencies
@@ -36,7 +37,7 @@ class VectorBenderHelp(QDialog):
         self.setMinimumHeight(450)
 
         self.helpFile = os.path.join(os.path.dirname(__file__),'README.html')
-        
+
         self.setWindowTitle('VectorBender')
 
         txt = QTextBrowser()

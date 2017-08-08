@@ -5,7 +5,7 @@ import math
 try:
     #we silently fail the import here since message is already taken car in vectorbender.py
     import matplotlib.tri
-except Exception, e:
+except Exception as e:
     pass
 
 class Transformer():
@@ -46,7 +46,7 @@ class BendTransformer(Transformer):
         else:
             self.expandedHull = None
 
-        # We compute the delaunay        
+        # We compute the delaunay
         self.delaunay = matplotlib.tri.Triangulation([p.x() for p in self.pointsA],[p.y() for p in self.pointsA])
         self.trifinder = self.delaunay.get_trifinder()
 
@@ -114,9 +114,9 @@ class AffineTransformer(Transformer):
 
         MATRIX
 
-            [a,b,c] 
-        M = [d,e,f] 
-            [0,0,1] 
+            [a,b,c]
+        M = [d,e,f]
+            [0,0,1]
 
                [x11]   [x12]
         1] M * [y11] = [y12]
@@ -131,7 +131,7 @@ class AffineTransformer(Transformer):
                [ 1 ]   [ 1 ]
 
         Equations to solve
-        [ 
+        [
             a*x11+b*y11+c = x12,
             d*x11+e*y11+f = y12,
             a*x21+b*y21+c = x22,
@@ -190,13 +190,13 @@ class LinearTransformer(Transformer):
         self.b1 = self.pointsB[0]
         self.b2 = self.pointsB[1]
 
-        #scale 
+        #scale
         self.ds = math.sqrt( (self.b2.x()-self.b1.x())**2.0+(self.b2.y()-self.b1.y())**2.0 ) / math.sqrt( (self.a2.x()-self.a1.x())**2.0+(self.a2.y()-self.a1.y())**2.0 )
         #rotation
         self.da =  math.atan2( self.b2.y()-self.b1.y(), self.b2.x()-self.b1.x() ) - math.atan2( self.a2.y()-self.a1.y(), self.a2.x()-self.a1.x() )
         #translation
         self.dx1 = self.pointsA[0].x()
-        self.dy1 = self.pointsA[0].y() 
+        self.dy1 = self.pointsA[0].y()
         self.dx2 = self.pointsB[0].x()
         self.dy2 = self.pointsB[0].y()
 
@@ -206,7 +206,7 @@ class LinearTransformer(Transformer):
         #move to origin (translation part 1)
         p = QgsPoint( p.x()-self.dx1, p.y()-self.dy1 )
 
-        #scale 
+        #scale
         p = QgsPoint( self.ds*p.x(), self.ds*p.y() )
 
         #rotation
@@ -222,7 +222,7 @@ class TranslationTransformer(Transformer):
         Transformer.__init__(self, pairsLayer, restrictToSelection)
 
         # Make sure data is valid
-        assert len(self.pointsA)==1 
+        assert len(self.pointsA)==1
         assert len(self.pointsA)==len(self.pointsB)
 
         self.dx = self.pointsB[0].x()-self.pointsA[0].x()

@@ -21,8 +21,9 @@
 """
 
 # Import the PyQt and QGIS libraries
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QAction
 from qgis.core import *
 from qgis.gui import *
 
@@ -40,14 +41,14 @@ try:
     if StrictVersion(matplotlib.__version__) < StrictVersion(minVersion):
         dependenciesStatus=1
         QgsMessageLog.logMessage("Matplotlib version too old (%s instead of %s). You won't be able to use the bending algorithm" % (matplotlib.__version__,minVersion), 'VectorBender')
-except Exception, e:
+except Exception as e:
     QgsMessageLog.logMessage("Matplotlib is missing. You won't be able to use the bending algorithm", 'VectorBender')
     dependenciesStatus = 0
 
 # Other classes
-from vectorbendertransformers import *
-from vectorbenderdialog import VectorBenderDialog
-from vectorbenderhelp import VectorBenderHelp
+from .vectorbendertransformers import *
+from .vectorbenderdialog import VectorBenderDialog
+from .vectorbenderhelp import VectorBenderHelp
 
 class VectorBender:
 
@@ -64,7 +65,7 @@ class VectorBender:
 
 
     def initGui(self):
-        
+
         self.action = QAction( QIcon(os.path.join(os.path.dirname(__file__),'resources','icon.png')), "Vector Bender", self.iface.mainWindow())
         self.action.triggered.connect(self.showUi)
         self.iface.addToolBarIcon(self.action)
@@ -78,7 +79,7 @@ class VectorBender:
         if self.aboutWindow is None:
             self.aboutWindow = VectorBenderHelp()
         self.aboutWindow.show()
-        self.aboutWindow.raise_() 
+        self.aboutWindow.raise_()
 
     def unload(self):
         if self.dlg is not None:
@@ -113,7 +114,7 @@ class VectorBender:
             return 0
 
         featuresCount = len(pairsLayer.selectedFeaturesIds()) if self.dlg.restrictBox_pairsLayer.isChecked() else len(pairsLayer.allFeatureIds())
-        
+
         if featuresCount == 1:
             return 1
         elif featuresCount == 2:
@@ -127,7 +128,7 @@ class VectorBender:
                 return 4
 
         return 0
-    
+
     def run(self):
 
         self.dlg.progressBar.setValue( 0 )
@@ -174,7 +175,7 @@ class VectorBender:
 
             #TODO : this cood be much simple if we could iterate through to vertices and use QgsGeometry.moveVertex(x,y,index), but QgsGeometry.vertexAt(index) doesn't tell wether the index exists, so there's no clean way to iterate...
 
-            if geom.type() == QGis.Point:
+            if geom.type() == QgsWkbTypes.PointGeometry: #QGis.Point:
 
                 if not geom.isMultipart():
                     # SINGLE PART POINT
@@ -189,7 +190,7 @@ class VectorBender:
                         newListA.append( self.transformer.map(p) )
                     newGeom = QgsGeometry.fromMultiPoint( newListA )
 
-            elif geom.type() == QGis.Line:
+            elif geom.type() == QgsWkbTypes.LineGeometry: #QGis.Line:
 
                 if not geom.isMultipart():
                     # SINGLE PART LINESTRING
@@ -210,7 +211,7 @@ class VectorBender:
                         newListA.append( newListB )
                     newGeom = QgsGeometry.fromMultiPolyline( newListA )
 
-            elif geom.type() == QGis.Polygon:
+            elif geom.type() == QgsWkbTypes.PolygonGeometry: #QGis.Polygon:
 
                 if not geom.isMultipart():
                     # SINGLE PART POLYGON
